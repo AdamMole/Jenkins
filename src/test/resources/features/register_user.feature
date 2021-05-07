@@ -11,3 +11,6 @@ Feature: Rejestracja uzytkownika
     Then Uzytkownik powinien zostac przeniesiony na strone zalogowanego uzytkownika
 
   Scenario: Tworzenie uzytkownika z adresem email ktory istnieje w bazie danych
+    Given Uzytkownik z adresem email istniejacym w aplikacji
+    When Uzytkownik rejestruje sie w aplikacji
+    Then Uzytkownik powinien zobaczyc blad zawierajacy An account is already registered with your email address
