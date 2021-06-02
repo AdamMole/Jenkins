@@ -1,32 +1,64 @@
+import io.cucumber.java.After;
+import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import org.openqa.selenium.WebDriver;
+
+import org.openqa.selenium.WebElement;
+import org.testng.Assert;
+import pl.testeroprogramowania.pages.HomePage;
+import pl.testeroprogramowania.pages.LoggedUserPage;
+import pl.testeroprogramowania.pages.MyAccountPage;
+import pl.testeroprogramowania.utils.DriverFactory;
+
+import java.util.concurrent.TimeUnit;
 
 public class StepDefs {
 
-    @Given("Uzytkownik z unikalnym adresem email")
-    public void uzytkownikZUnikalnymAdresemEmail() {
-        System.out.println("Tworze uzytkownika z unikalnym adreserm");
+    private WebDriver driver;
+    private String email;
+
+    @Before
+    public void setup() {
+        driver = DriverFactory.getDriver();
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+        driver.manage().window().maximize();
+        driver.get("http://seleniumdemo.com/");
     }
 
-    @When("Uzytkownik rejestruje sie w aplikacji")
-    public void uzytkownikRejestrujeSieWAplikacji() {
-        System.out.println("Rejestracja uzytkownika");
+    @After
+    public void tearDown() {
+        driver.quit();
     }
 
-    @Then("Uzytkownik powinien zostac przeniesiony na strone zalogowanego uzytkownika")
-    public void uzytkownikPowinienZostacPrzeniesionyNaStroneZalogowanegoUzytkownika() {
-        System.out.println("Sprawdzenie czy jesteśmy na odpowiedniej stronie");
+    @Given("User with unique email")
+    public void userWithUniqueEmail() {
+        int random = (int) (Math.random() * 1000);
+        email = "test" + random + "@test.pl";
     }
 
-    @Given("Uzytkownik z adresem email istniejacym w aplikacji")
-    public void uzytkownikZAdresemEmailIstniejacymWAplikacji() {
-        System.out.println("Tworze uzytkownika z adresem email istniejacym w aplikacji");
-
+    @When("User registers in application")
+    public void userRegistersInApplication() {
+        new HomePage(driver)
+                .openMyAccountPage()
+                .registerUserValidData(email, "test@test.pl");
     }
 
-    @Then("Uzytkownik powinien zobaczyc blad zawierajacy An account is already registered with your email address")
-    public void uzytkownikPowinienZobaczycBladZawierajacyAnAccountIsAlreadyRegisteredWithYourEmailAddress() {
-        System.out.println("Sprawdzam czy został wyswietlony blad");
+    @Then("User should be redirected to logged user page")
+    public void userShouldBeRedirectedToLoggedUserPage() {
+        WebElement dashboardLink = new LoggedUserPage(driver).getDashboardLink();
+        Assert.assertEquals(dashboardLink.getText(), "Dashboard");
+    }
+
+    @Given("User with email which already exist in the application")
+    public void userWithEmailWhichAlreadyExistInTheApplication() {
+        email = "test1@test.pl";
+    }
+
+    @Then("User should see an error which contains An account is already registered with your email address")
+    public void userShouldSeeAnErrorWhichContainsAnAccountIsAlreadyRegisteredWithYourEmailAddress() {
+        WebElement error = new MyAccountPage(driver).getError();
+        Assert.assertTrue(error.getText().contains("An account is already registered with your email address"));
     }
 }
