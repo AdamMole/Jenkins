@@ -1,10 +1,8 @@
-import io.cucumber.java.After;
-import io.cucumber.java.Before;
+package pl.testeroprogramowania.steps;
+
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import org.openqa.selenium.WebDriver;
-
 import org.openqa.selenium.WebElement;
 import org.testng.Assert;
 import pl.testeroprogramowania.pages.HomePage;
@@ -12,25 +10,9 @@ import pl.testeroprogramowania.pages.LoggedUserPage;
 import pl.testeroprogramowania.pages.MyAccountPage;
 import pl.testeroprogramowania.utils.DriverFactory;
 
-import java.util.concurrent.TimeUnit;
+public class StepDefs  {
 
-public class StepDefs {
-
-    private WebDriver driver;
-    private String email;
-
-    @Before
-    public void setup() {
-        driver = DriverFactory.getDriver();
-        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-        driver.manage().window().maximize();
-        driver.get("http://seleniumdemo.com/");
-    }
-
-    @After
-    public void tearDown() {
-        driver.quit();
-    }
+    protected String email;
 
     @Given("User with unique email")
     public void userWithUniqueEmail() {
@@ -40,14 +22,14 @@ public class StepDefs {
 
     @When("User registers in application")
     public void userRegistersInApplication() {
-        new HomePage(driver)
+        new HomePage(DriverFactory.getDriver())
                 .openMyAccountPage()
                 .registerUserValidData(email, "test@test.pl");
     }
 
     @Then("User should be redirected to logged user page")
     public void userShouldBeRedirectedToLoggedUserPage() {
-        WebElement dashboardLink = new LoggedUserPage(driver).getDashboardLink();
+        WebElement dashboardLink = new LoggedUserPage(DriverFactory.getDriver()).getDashboardLink();
         Assert.assertEquals(dashboardLink.getText(), "Dashboard");
     }
 
@@ -58,7 +40,16 @@ public class StepDefs {
 
     @Then("User should see an error which contains An account is already registered with your email address")
     public void userShouldSeeAnErrorWhichContainsAnAccountIsAlreadyRegisteredWithYourEmailAddress() {
-        WebElement error = new MyAccountPage(driver).getError();
+        WebElement error = new MyAccountPage(DriverFactory.getDriver()).getError();
         Assert.assertTrue(error.getText().contains("An account is already registered with your email address"));
     }
+
+    @When("User logs in to the application")
+    public void userLogsInToTheApplication() {
+        new HomePage(DriverFactory.getDriver())
+                .openMyAccountPage()
+                .logInValidData(email, "test@test.pl");
+    }
+
+
 }
