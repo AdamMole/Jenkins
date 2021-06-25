@@ -5,6 +5,6 @@ Feature: Checkout
 
   Scenario: Successful checkout
     Given User on shop home page
-    When he selects product
+    When he selects "Java Selenium WebDriver" product
     And he fills address details
     Then he should be redirected to thank you page

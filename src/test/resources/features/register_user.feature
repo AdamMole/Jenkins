@@ -10,6 +10,6 @@ Feature: Register user
     Then User should be redirected to logged user page
 
   Scenario: Register user with email which already exist in the application
-    Given User with email which already exist in the application
+    Given User with email "test1@test.pl" which already exist in the application
     When User registers in application
     Then User should see an error which contains An account is already registered with your email address

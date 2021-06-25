@@ -10,9 +10,10 @@ import pl.testeroprogramowania.pages.LoggedUserPage;
 import pl.testeroprogramowania.pages.MyAccountPage;
 import pl.testeroprogramowania.utils.DriverFactory;
 
-public class StepDefs  {
+public class SignUpAndInStepDefs {
 
     protected String email;
+    private LoggedUserPage loggedUserPage;
 
     @Given("User with unique email")
     public void userWithUniqueEmail() {
@@ -22,20 +23,16 @@ public class StepDefs  {
 
     @When("User registers in application")
     public void userRegistersInApplication() {
-        new HomePage(DriverFactory.getDriver())
+        loggedUserPage =
+                new HomePage(DriverFactory.getDriver())
                 .openMyAccountPage()
                 .registerUserValidData(email, "test@test.pl");
     }
 
     @Then("User should be redirected to logged user page")
     public void userShouldBeRedirectedToLoggedUserPage() {
-        WebElement dashboardLink = new LoggedUserPage(DriverFactory.getDriver()).getDashboardLink();
+        WebElement dashboardLink = loggedUserPage.getDashboardLink();
         Assert.assertEquals(dashboardLink.getText(), "Dashboard");
-    }
-
-    @Given("User with email which already exist in the application")
-    public void userWithEmailWhichAlreadyExistInTheApplication() {
-        email = "test1@test.pl";
     }
 
     @Then("User should see an error which contains An account is already registered with your email address")
@@ -46,10 +43,14 @@ public class StepDefs  {
 
     @When("User logs in to the application")
     public void userLogsInToTheApplication() {
-        new HomePage(DriverFactory.getDriver())
+       loggedUserPage = new HomePage(DriverFactory.getDriver())
                 .openMyAccountPage()
                 .logInValidData(email, "test@test.pl");
     }
 
 
+    @Given("User with email {string} which already exist in the application")
+    public void userWithEmailWhichAlreadyExistInTheApplication(String email) {
+        this.email = email;
+    }
 }

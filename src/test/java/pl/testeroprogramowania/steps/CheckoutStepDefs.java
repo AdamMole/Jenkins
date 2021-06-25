@@ -26,13 +26,6 @@ public class CheckoutStepDefs  {
         productListPage = new HomePage(DriverFactory.getDriver()).openShopPage();
     }
 
-    @When("he selects product")
-    public void heSelectsProduct() {
-          cartPage = productListPage.openProduct("Java Selenium WebDriver")
-                .addProductToCart()
-                .viewCart();
-    }
-
     @And("he fills address details")
     public void heFillsAddressDetails() {
         orderDetailsPage= cartPage.openAddressDetails()
@@ -45,5 +38,11 @@ public class CheckoutStepDefs  {
         Assert.assertEquals(orderDetailsPage.getProductName().getText(),"Java Selenium WebDriver × 1");
     }
 
+    @When("he selects {string} product")
+    public void heSelectsProduct(String productName) {
+        cartPage = productListPage.openProduct(productName)
+                .addProductToCart()
+                .viewCart();
+    }
 }
 
